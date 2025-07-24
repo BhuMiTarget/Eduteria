@@ -23,11 +23,13 @@
 <body>
   <h2>EDUTERIA NCERT TEST 07</h2>
   <button class="action-button" onclick="startTimer()">⏱ Start Timer</button>
-  <label><input type="checkbox" checked onchange="toggleNegativeMarking(this)"> Negative Marking</label>
+<label><input type="checkbox" checked onchange="toggleNegativeMarking(this)"> Negative Marking</label>
   <span id="timer"></span>
   <div id="omr-sheet"></div>
   <button class="action-button" onclick="saveAnswers()">💾 Save</button>
   <button class="action-button" onclick="calculateScore()">🧮 Check Score</button>
+<button class="action-button" onclick="exportFrozen()">🧊 Export Frozen HTML</button>
+
 
   <div id="customAlert">
     <h3 id="popupTitle"></h3>
@@ -36,7 +38,7 @@
   </div>
 
   <script>
-    const testId = "test_07";
+    const testId = "test_15";
     const answers = JSON.parse(localStorage.getItem(testId) || "{}");
     let startTime = null;
     let answerKey = {
@@ -167,11 +169,12 @@
         }
       }
       let timeTaken = "";
-      if (startTime) {
-        const diff = Math.floor((Date.now() - startTime) / 1000);
-        const m = Math.floor(diff / 60), s = diff % 60;
-        timeTaken = `\n⏱ Time Taken: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-      }
+if (startTime) {
+  const diff = Math.floor((Date.now() - startTime) / 1000);
+  const m = Math.floor(diff / 60), s = diff % 60;
+  timeTaken = `\n⏱ Time Taken: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  document.getElementById("time-taken").textContent = `${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+}
       const score = negativeMarking ? (correct * 3 - wrong) : (correct);
       showPopup(`✅ Correct: ${correct}\n❌ Wrong: ${wrong}\n🎯 Score: ${score}${timeTaken}`);
     }
@@ -217,7 +220,7 @@
     function closePopup() {
       document.getElementById("customAlert").style.display = "none";
     }
-  function exportFrozen() {
+function exportFrozen() {
   let correct = 0, wrong = 0, unanswered = 0;
 
   for (let i = 1; i <= 100; i++) {
