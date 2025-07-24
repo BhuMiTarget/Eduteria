@@ -175,7 +175,7 @@ if (startTime) {
   timeTaken = `\n⏱ Time Taken: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
   document.getElementById("time-taken").textContent = `${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
 }
-      const score = negativeMarking ? (correct * 1 - wrong *0.33) : (correct);
+      const score = negativeMarking ? (correct * 1 - wrong * (1/3)) : (correct);
       const roundedScore= score.toFixed(2)
       showPopup(`✅ Correct: ${correct}\n❌ Wrong: ${wrong}\n🎯 Score: ${roundedScore}${timeTaken}`);
     }
@@ -231,7 +231,7 @@ function exportFrozen() {
     else wrong++;
   }
 
-  const score = negativeMarking ? (correct * 1 - wrong *0.33) : (correct);
+  const score = negativeMarking ? (correct * 1 - wrong * (1/3)) : (correct);
       const roundedScore= score.toFixed(2);
   const timeTakenElement = document.getElementById("time-taken");
   const timeTakenText = timeTakenElement ? timeTakenElement.innerText : "Unknown";
