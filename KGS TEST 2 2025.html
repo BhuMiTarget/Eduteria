@@ -23,7 +23,6 @@
 <body>
   <h2>KGS TEST 2 2025</h2>
   <button class="action-button" onclick="startTimer()">⏱ Start Timer</button>
- <span id="time-taken" style="display:none;"></span>
 <label><input type="checkbox" checked onchange="toggleNegativeMarking(this)"> Negative Marking</label>
   <span id="timer"></span>
   <div id="omr-sheet"></div>
@@ -379,5 +378,6 @@ function exportFrozen() {
     build();
     loadAnswers();
   </script>
+<span id="time-taken" style="display:none;"></span>
 </body>
 </html>
