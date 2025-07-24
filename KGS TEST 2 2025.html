@@ -270,6 +270,19 @@
       document.getElementById("customAlert").style.display = "none";
     }
 function exportFrozen() {
+  let correct = 0, wrong = 0, unanswered = 0;
+
+  for (let i = 1; i <= 150; i++) {
+    const given = answers[i];
+    if (!given) unanswered++;
+    else if (given === answerKey[i]) correct++;
+    else wrong++;
+  }
+
+  const score = correct;
+  const timeTakenElement = document.getElementById("time-taken");
+  const timeTakenText = timeTakenElement ? timeTakenElement.innerText : "Unknown";
+
   let frozenHTML = `
 <!DOCTYPE html>
 <html lang="en">
@@ -279,6 +292,7 @@ function exportFrozen() {
   <title>${document.title} (Frozen)</title>
   <style>
     body { font-family: sans-serif; padding: 10px; background: #f9f9f9; }
+    h2, h3 { text-align: center; margin: 10px 0; }
     .question { margin-bottom: 10px; padding: 10px; background: #fff; border-radius: 6px; }
     .question-number { font-weight: bold; margin-bottom: 5px; }
     .options { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -305,18 +319,25 @@ function exportFrozen() {
 </head>
 <body>
   <h2>${document.title} (Frozen)</h2>
+  <h3>Score: ${score} / 150</h3>
+  <h3>
+    ✅ Correct: ${correct} &nbsp;&nbsp;
+    ❌ Wrong: ${wrong} &nbsp;&nbsp;
+    ❓ Unanswered: ${unanswered}
+  </h3>
+  <h3>⏱ Time Taken: ${timeTakenText}</h3>
   <div id="omr-sheet">`;
 
   for (let i = 1; i <= 150; i++) {
     const ans = answers[i];
-    const correct = answerKey[i];
+    const correctAns = answerKey[i];
     frozenHTML += `<div class="question">
       <div class="question-number">Question ${i}</div>
       <div class="options">`;
 
     ['A', 'B', 'C', 'D'].forEach(opt => {
       let cls = "";
-      if (opt === ans) cls = (opt === correct) ? "selected" : "wrong";
+      if (opt === ans) cls = (opt === correctAns) ? "selected" : "wrong";
       frozenHTML += `<button class="${cls}">${opt}</button>`;
     });
 
@@ -336,7 +357,7 @@ function exportFrozen() {
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     navigator.share({
       title: document.title,
-      text: "Sharing your frozen OMR sheet.",
+      text: `Frozen OMR Sheet\nScore: ${score}/150\nCorrect: ${correct} | Wrong: ${wrong} | Unanswered: ${unanswered}\nTime Taken: ${timeTakenText}`,
       files: [file]
     }).catch((err) => {
       console.error("Share failed:", err);
