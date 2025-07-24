@@ -220,7 +220,7 @@
   function exportFrozen() {
   let correct = 0, wrong = 0, unanswered = 0;
 
-  for (let i = 1; i <= 150; i++) {
+  for (let i = 1; i <= 100; i++) {
     const given = answers[i];
     if (!given) unanswered++;
     else if (given === answerKey[i]) correct++;
@@ -276,7 +276,7 @@
   <h3>⏱ Time Taken: ${timeTakenText}</h3>
   <div id="omr-sheet">`;
 
-  for (let i = 1; i <= 150; i++) {
+  for (let i = 1; i <= 100; i++) {
     const ans = answers[i];
     const correctAns = answerKey[i];
     frozenHTML += `<div class="question">
