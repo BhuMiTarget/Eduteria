@@ -280,14 +280,27 @@ function exportFrozen() {
   <style>
     body { font-family: sans-serif; padding: 10px; background: #f9f9f9; }
     .question { margin-bottom: 10px; padding: 10px; background: #fff; border-radius: 6px; }
-    .question-number { font-weight: bold; }
+    .question-number { font-weight: bold; margin-bottom: 5px; }
     .options { display: flex; gap: 10px; flex-wrap: wrap; }
-    .options div {
-      flex: 1 1 70px; padding: 10px; border: 1px solid #007bff;
-      border-radius: 4px; text-align: center;
+    .options .opt {
+      flex: 1 1 70px;
+      padding: 10px;
+      border: 1px solid #007bff;
+      background: #fff;
+      color: #007bff;
+      border-radius: 4px;
+      text-align: center;
     }
-    .selected { background: #28a745; color: #fff; border-color: #28a745; }
-    .wrong { background: #dc3545; color: #fff !important; border-color: #dc3545; }
+    .options .selected {
+      background: #28a745;
+      color: #fff;
+      border-color: #28a745;
+    }
+    .options .wrong {
+      background: #dc3545 !important;
+      color: #fff !important;
+      border-color: #dc3545 !important;
+    }
   </style>
 </head>
 <body>
@@ -297,16 +310,17 @@ function exportFrozen() {
   for (let i = 1; i <= 150; i++) {
     const ans = answers[i];
     const correct = answerKey[i];
-    const opts = ['A','B','C','D'].map(opt => {
-      let cls = "";
-      if (opt === ans) cls += (opt === correct ? "selected" : "wrong");
-      return `<div class="${cls}">${opt}</div>`;
-    }).join("");
-
     frozenHTML += `<div class="question">
       <div class="question-number">Question ${i}</div>
-      <div class="options">${opts}</div>
-    </div>`;
+      <div class="options">`;
+
+    ['A','B','C','D'].forEach(opt => {
+      let cls = "opt";
+      if (opt === ans) cls += opt === correct ? " selected" : " wrong";
+      frozenHTML += `<div class="${cls}">${opt}</div>`;
+    });
+
+    frozenHTML += `</div></div>`;
   }
 
   frozenHTML += `
@@ -320,7 +334,6 @@ function exportFrozen() {
   a.download = document.title.replace(/\s+/g, '_') + "_Frozen.html";
   a.click();
 }
-
     build();
     loadAnswers();
   </script>
