@@ -270,7 +270,7 @@ function exportFrozen() {
 </head>
 <body>
   <h2>${document.title} (Frozen)</h2>
-  <h3>Score: ${score} / 150</h3>
+  <h3>Score: ${score} / 100</h3>
   <h3>
     ✅ Correct: ${correct} &nbsp;&nbsp;
     ❌ Wrong: ${wrong} &nbsp;&nbsp;
@@ -308,7 +308,7 @@ function exportFrozen() {
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     navigator.share({
       title: document.title,
-      text: `Frozen OMR Sheet\nScore: ${score}/150\nCorrect: ${correct} | Wrong: ${wrong} | Unanswered: ${unanswered}\nTime Taken: ${timeTakenText}`,
+      text: `Frozen OMR Sheet\nScore: ${score}/100\nCorrect: ${correct} | Wrong: ${wrong} | Unanswered: ${unanswered}\nTime Taken: ${timeTakenText}`,
       files: [file]
     }).catch((err) => {
       console.error("Share failed:", err);
