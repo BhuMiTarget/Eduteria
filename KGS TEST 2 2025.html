@@ -227,7 +227,7 @@
       }
       const score = negativeMarking ? (correct * 3 - wrong) : (correct);
       showPopup(`✅ Correct: ${correct}\n❌ Wrong: ${wrong}\n🎯 Score: ${score}${timeTaken}`);
-    }
+    } document.getElementById("time-taken").textContent = `${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
     function loadAnswers() {
       Object.keys(answers).forEach(q => {
         const opt = answers[q];
