@@ -175,8 +175,9 @@ if (startTime) {
   timeTaken = `\n⏱ Time Taken: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
   document.getElementById("time-taken").textContent = `${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
 }
-      const score = negativeMarking ? (correct * 3 - wrong) : (correct);
-      showPopup(`✅ Correct: ${correct}\n❌ Wrong: ${wrong}\n🎯 Score: ${score}${timeTaken}`);
+      const score = negativeMarking ? (correct * 1 - wrong *0.33) : (correct);
+      const roundedScore= score.toFixed(2)
+      showPopup(`✅ Correct: ${correct}\n❌ Wrong: ${wrong}\n🎯 Score: ${roundedScore}${timeTaken}`);
     }
     function loadAnswers() {
       Object.keys(answers).forEach(q => {
@@ -230,7 +231,8 @@ function exportFrozen() {
     else wrong++;
   }
 
-  const score = correct;
+  const score = negativeMarking ? (correct * 1 - wrong *0.33) : (correct);
+      const roundedScore= score.toFixed(2);
   const timeTakenElement = document.getElementById("time-taken");
   const timeTakenText = timeTakenElement ? timeTakenElement.innerText : "Unknown";
 
@@ -270,7 +272,7 @@ function exportFrozen() {
 </head>
 <body>
   <h2>${document.title} (Frozen)</h2>
-  <h3>Score: ${score} / 100</h3>
+  <h3>Score: ${roundedScore} / 100</h3>
   <h3>
     ✅ Correct: ${correct} &nbsp;&nbsp;
     ❌ Wrong: ${wrong} &nbsp;&nbsp;
@@ -308,7 +310,7 @@ function exportFrozen() {
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     navigator.share({
       title: document.title,
-      text: `Frozen OMR Sheet\nScore: ${score}/100\nCorrect: ${correct} | Wrong: ${wrong} | Unanswered: ${unanswered}\nTime Taken: ${timeTakenText}`,
+      text: `Frozen OMR Sheet\nScore: ${roundedScore}/100\nCorrect: ${correct} | Wrong: ${wrong} | Unanswered: ${unanswered}\nTime Taken: ${timeTakenText}`,
       files: [file]
     }).catch((err) => {
       console.error("Share failed:", err);
