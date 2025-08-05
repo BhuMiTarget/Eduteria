@@ -18,16 +18,38 @@
       background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); z-index:9999; max-width:90%; }
     #customAlert h3 { margin-top:0; }
     #customAlert button { margin-top:10px; padding:5px 15px; background:#007bff; color:#fff; border:none; border-radius:5px; }
+    .clear-btn {
+  background: transparent;
+  color: #dc3545;
+  border: none;
+  font-size: 16px;
+  padding: 0 4px;
+  margin-left: 4px;
+  cursor: pointer;
+  line-height: 1;
+  vertical-align: middle;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.clear-btn:hover {
+  opacity: 1;
+  color: #a71d2a;
+}
+;
+}
   </style>
 </head>
 <body>
   <h2>EDUTERIA NCERT TEST 04</h2>
   <button class="action-button" onclick="startTimer()">⏱ Start Timer</button>
-  <label><input type="checkbox" checked onchange="toggleNegativeMarking(this)"> Negative Marking</label>
+<label><input type="checkbox" checked onchange="toggleNegativeMarking(this)"> Negative Marking</label>
   <span id="timer"></span>
   <div id="omr-sheet"></div>
   <button class="action-button" onclick="saveAnswers()">💾 Save</button>
   <button class="action-button" onclick="calculateScore()">🧮 Check Score</button>
+<button class="action-button" onclick="exportFrozen()">SHARE TEST RESPONSE</button>
+
 
   <div id="customAlert">
     <h3 id="popupTitle"></h3>
@@ -36,7 +58,7 @@
   </div>
 
   <script>
-    const testId = "test_04";
+    const testId = "test_15";
     const answers = JSON.parse(localStorage.getItem(testId) || "{}");
     let startTime = null;
     let answerKey = {
@@ -167,13 +189,15 @@
         }
       }
       let timeTaken = "";
-      if (startTime) {
-        const diff = Math.floor((Date.now() - startTime) / 1000);
-        const m = Math.floor(diff / 60), s = diff % 60;
-        timeTaken = `\n⏱ Time Taken: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-      }
-      const score = negativeMarking ? (correct * 3 - wrong) : (correct);
-      showPopup(`✅ Correct: ${correct}\n❌ Wrong: ${wrong}\n🎯 Score: ${score}${timeTaken}`);
+if (startTime) {
+  const diff = Math.floor((Date.now() - startTime) / 1000);
+  const m = Math.floor(diff / 60), s = diff % 60;
+  timeTaken = `\n⏱ Time Taken: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  document.getElementById("time-taken").textContent = `${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+}
+      const score = negativeMarking ? (correct * 1 - wrong * (1/3)) : (correct);
+      const roundedScore = score.toFixed(2);
+      showPopup(`✅ Correct: ${correct}\n❌ Wrong: ${wrong}\n🎯 Score: ${roundedScore}${timeTaken}`);
     }
     function loadAnswers() {
       Object.keys(answers).forEach(q => {
@@ -188,11 +212,14 @@
         const d = document.createElement("div");
         d.className = "question";
         d.dataset.q = i;
-        d.innerHTML = `<div class="question-number">Question ${i}</div><div class="options">
-          <button onclick="selectOption(${i},'A',this)">A</button>
-          <button onclick="selectOption(${i},'B',this)">B</button>
-          <button onclick="selectOption(${i},'C',this)">C</button>
-          <button onclick="selectOption(${i},'D',this)">D</button></div>`;
+        d.innerHTML = `<div class="question-number">Question ${i}</div>
+  <div class="options">
+    <button onclick="selectOption(${i},'A',this)">A</button>
+    <button onclick="selectOption(${i},'B',this)">B</button>
+    <button onclick="selectOption(${i},'C',this)">C</button>
+    <button onclick="selectOption(${i},'D',this)">D</button>
+    <button class="clear-btn" title="Clear answer" onclick="clearAnswer(${i})">×</button>
+  </div>`;
         c.appendChild(d);
       }
     }
@@ -217,8 +244,123 @@
     function closePopup() {
       document.getElementById("customAlert").style.display = "none";
     }
+    function clearAnswer(q) {
+  delete answers[q]; // Remove answer from your answers object
+  const questionDiv = document.querySelector(`.question[data-q="${q}"]`);
+  if (questionDiv) {
+    questionDiv.querySelectorAll('button').forEach(b => b.classList.remove('selected', 'wrong'));
+  }
+ // Optionally save the updated answers right away
+}
+function exportFrozen() {
+  let correct = 0, wrong = 0, unanswered = 0;
+
+  for (let i = 1; i <= 100; i++) {
+    const given = answers[i];
+    if (!given) unanswered++;
+    else if (given === answerKey[i]) correct++;
+    else wrong++;
+  }
+
+  const score = negativeMarking ? (correct * 1 - wrong * (1/3)) : (correct);
+  const roundedScore = score.toFixed(2);
+  const timeTakenElement = document.getElementById("time-taken");
+  const timeTakenText = timeTakenElement ? timeTakenElement.innerText : "Unknown";
+
+  let frozenHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${document.title} (Frozen)</title>
+  <style>
+    body { font-family: sans-serif; padding: 10px; background: #f9f9f9; }
+    h2, h3 { text-align: center; margin: 10px 0; }
+    .question { margin-bottom: 10px; padding: 10px; background: #fff; border-radius: 6px; }
+    .question-number { font-weight: bold; margin-bottom: 5px; }
+    .options { display: flex; gap: 10px; flex-wrap: wrap; }
+    .options button {
+      flex: 1 1 70px;
+      padding: 10px;
+      border: 1px solid #007bff;
+      background: #fff;
+      color: #007bff;
+      border-radius: 4px;
+      cursor: default;
+    }
+    .options button.selected {
+      background: #28a745;
+      color: #fff;
+      border-color: #28a745;
+    }
+    .options button.wrong {
+      background: #dc3545 !important;
+      color: #fff !important;
+      border-color: #dc3545 !important;
+    }
+  </style>
+</head>
+<body>
+  <h2>${document.title} (Frozen)</h2>
+  <h3>Score: ${roundedScore} / 100</h3>
+  <h3>
+    ✅ Correct: ${correct} &nbsp;&nbsp;
+    ❌ Wrong: ${wrong} &nbsp;&nbsp;
+    ❓ Unanswered: ${unanswered}
+  </h3>
+  <h3>⏱ Time Taken: ${timeTakenText}</h3>
+  <div id="omr-sheet">`;
+
+  for (let i = 1; i <= 100; i++) {
+    const ans = answers[i];
+    const correctAns = answerKey[i];
+    frozenHTML += `<div class="question">
+      <div class="question-number">Question ${i}</div>
+      <div class="options">`;
+
+    ['A', 'B', 'C', 'D'].forEach(opt => {
+      let cls = "";
+      if (opt === ans) cls = (opt === correctAns) ? "selected" : "wrong";
+      frozenHTML += `<button class="${cls}">${opt}</button>`;
+    });
+
+    frozenHTML += `</div></div>`;
+  }
+
+  frozenHTML += `
+  </div>
+</body>
+</html>`;
+
+  const blob = new Blob([frozenHTML], { type: "text/html" });
+  const file = new File([blob], document.title.replace(/\s+/g, '_') + "_Frozen.html", {
+    type: "text/html"
+  });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({
+      title: document.title,
+      text: `Frozen OMR Sheet\nScore: ${roundedScore}/100\nCorrect: ${correct} | Wrong: ${wrong} | Unanswered: ${unanswered}\nTime Taken: ${timeTakenText}`,
+      files: [file]
+    }).catch((err) => {
+      console.error("Share failed:", err);
+      fallbackDownload(blob, file.name);
+    });
+  } else {
+    fallbackDownload(blob, file.name);
+  }
+
+  function fallbackDownload(blob, filename) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+  }
+}
     build();
     loadAnswers();
   </script>
+<span id="time-taken" style="display:none;"></span>
 </body>
 </html>
